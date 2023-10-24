@@ -1,5 +1,4 @@
 # rgb hsl yuz xyz
-import pandas as pd
 import numpy as np
 from PIL import Image
 
@@ -30,9 +29,9 @@ def display_comparing_two_images(
     plt.show()
 
 
-def rgb_to_xyz_convertor(image_path):
+def RGB_to_XYZ_convertor(image_path):
     img_cv2_rgb = image_to_rgb_convertor(image_path)
-    xyz_color = cv2.cvtColor(img_cv2_rgb, cv2.COLOR_RGB2XYZ)
+    # xyz_color = cv2.cvtColor(img_cv2_rgb, cv2.COLOR_RGB2XYZ)
 
     # Define the transformation matrix
     transformation_matrix = np.array([
@@ -48,7 +47,7 @@ def rgb_to_xyz_convertor(image_path):
 
     flatten_image = img_cv2_rgb.reshape((-1, 3))
 
-    # xyz_image = np.array([[np.dot(transformation_matrix, pixel) / 9 for pixel in line] for line in img_cv2_rgb])
+
     xyz_image = np.dot(flatten_image, transformation_matrix.T)
     xyz_image = xyz_image.reshape(img_cv2_rgb.shape)
     xyz_image_to_show = xyz_image.astype(np.uint8)
@@ -62,13 +61,7 @@ def rgb_to_xyz_convertor(image_path):
     z = np.copy(xyz_image_to_show) 
     z[:,:,0] = 0
     z[:,:,1] = 0
-
-
     
-
-    # display_comparing_two_images(
-    #     img_cv2_rgb, "CV2 Image RGB", x, "CV2 Image XYZ"
-    # )
 
     fig, axs = plt.subplots(1, 4, figsize=(10, 5))
     axs[0].imshow(img_cv2_rgb)
@@ -87,4 +80,4 @@ def rgb_to_xyz_convertor(image_path):
 
 
 # image_to_test = "../assets/tiberli.jpg"
-# rgb_to_xyz_convertor(image_to_test)
+# RGB_to_XYZ_convertor(image_to_test)
