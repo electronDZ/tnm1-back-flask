@@ -16,7 +16,7 @@ app = Flask(__name__)
 # ‘/’ URL is bound with hello_world() function.
 def hello_world():
     return 'Hello, World!'
-
+print('app')
 
 @app.route("/upload_image", methods=["POST"])
 def upload_image():

@@ -16,7 +16,7 @@ def display_signle_image(img_cv2, title):
     axs.set_title(title)
     plt.show()
 
-
+print('rgb')
 def display_comparing_two_images(
     first_img_cv2, first_title, seconde_img_cv2, seconde_title
 ):
