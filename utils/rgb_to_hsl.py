@@ -1,11 +1,13 @@
 import numpy as np
 
 from utils.image_to_rgb import image_to_rgb_convertor
-from helpers.HSL_helpers import calculate_v, calculate_h, calculate_s, calculate_rgb
+from helpers.HSL_helpers import calculate_v, calculate_h, calculate_s, hsi_to_rgb
 from helpers.compare_2_images import diff_2_images
 
 import cv2
 import matplotlib.pylab as plt
+
+
 
 def RGB_to_HSL_convertor(image_path):
     img_cv2_rgb = image_to_rgb_convertor(image_path)
@@ -13,7 +15,7 @@ def RGB_to_HSL_convertor(image_path):
 
 
     # Create an empty NumPy array for storing the HSL values
-    hsl_image = np.empty_like(img_cv2_rgb, dtype=np.float64)
+    hsv_image = np.empty_like(img_cv2_rgb, dtype=np.float64)
 
     normalized_img_cv2_rgb = img_cv2_rgb / 255 # np.arccos function returns NaN when its input is outside the range -1 to 1
 
@@ -26,24 +28,24 @@ def RGB_to_HSL_convertor(image_path):
             s = calculate_s(r, g, b)
             v = calculate_v(r, g, b)
 
-            hsl_image[i, j] = [h, s, v]
+            hsv_image[i, j] = [h, s, v]
 
 
-    hsl_to_rgb_image = np.empty_like(hsl_image, dtype=np.float64)
+    hsv_to_rgb_image = np.empty_like(hsv_image, dtype=np.float64)
     
-    # Iterate through each pixel of the hsl_image
-    for i in range(hsl_to_rgb_image.shape[0]):
-        for j in range(hsl_to_rgb_image.shape[1]):
-            h, s, v = hsl_image[i, j]
-            hsl_to_rgb_image[i, j] = calculate_rgb(h, s, v)
+    # Iterate through each pixel of the hsv_image
+    for i in range(hsv_to_rgb_image.shape[0]):
+        for j in range(hsv_to_rgb_image.shape[1]):
+            h, s, v = hsv_image[i, j]
+            hsv_to_rgb_image[i, j] = hsi_to_rgb(h, s, v)
 
     # Get the diff percentage
-    percent_difference = diff_2_images(img_cv2_rgb, hsl_to_rgb_image)
+    percent_difference = diff_2_images(img_cv2_rgb, hsv_to_rgb_image)
 
     # Split the XYZ image into its channels
-    h_channel = hsl_image[:, :, 0]
-    s_channel = hsl_image[:, :, 1]
-    l_channel = hsl_image[:, :, 2]
+    h_channel = hsv_image[:, :, 0]
+    s_channel = hsv_image[:, :, 1]
+    l_channel = hsv_image[:, :, 2]
    
 
     fig, axs = plt.subplots(2, 4, figsize=(10, 5))
@@ -66,9 +68,9 @@ def RGB_to_HSL_convertor(image_path):
     axs[1, 1].imshow(img_cv2_rgb)
     axs[1, 1].axis("off")
     axs[1, 1].set_title("Original")
-    axs[1, 2].imshow(hsl_to_rgb_image)
+    axs[1, 2].imshow(hsv_to_rgb_image)
     axs[1, 2].axis("off")
-    axs[1, 2].set_title("HSL to RGB")
+    axs[1, 2].set_title("HSV to RGB")
     # axs[1, 3].imshow(z)
     axs[1, 3].axis("off")
     # axs[1, 3].set_title("Z")

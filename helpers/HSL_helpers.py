@@ -1,4 +1,6 @@
 import numpy as np
+import math
+
 
 
 def calculate_v(r, g, b):
@@ -20,31 +22,33 @@ def calculate_h(r, g, b):
         h = 2 * np.pi - theta
     else:
         h = theta
-    return h
+    return h 
 
 
-def calculate_rgb(h, s, v):
-    c = v * s
-    x = c * (1 - abs((h / 60) % 2 - 1))
-    m = v - c
+def hsi_to_rgb(H, S, I):
+    H = np.where(H < 2*np.pi, H, 0)
+    H = np.where(H > 0, H, 0)
 
-    if 0 <= h < 60:
-        r, g, b = c, x, 0
-    elif 60 <= h < 120:
-        r, g, b = x, c, 0
-    elif 120 <= h < 180:
-        r, g, b = 0, c, x
-    elif 180 <= h < 240:
-        r, g, b = 0, x, c
-    elif 240 <= h < 300:
-        r, g, b = x, 0, c
-    elif 300 <= h < 360:
-        r, g, b = c, 0, x
-    else:
-        r = g = b = 0
+    R = np.zeros_like(H)
+    G = np.zeros_like(H)
+    B = np.zeros_like(H)
 
-    r = r + m
-    g = g + m
-    b = b + m
+    # RG sector (0 <= H < 2*pi/3).
+    idx = (0 <= H) & (H < 2*np.pi/3)
+    B[idx] = I[idx] * (1 - S[idx])
+    R[idx] = I[idx] * (1 + S[idx] * np.cos(H[idx]) / np.cos(np.pi/3 - H[idx]))
+    G[idx] = 3*I[idx] - (R[idx] + B[idx])
 
-    return [r, g, b]
+    # BG sector (2*pi/3 <= H < 4*pi/3).
+    idx = (2*np.pi/3 <= H) & (H < 4*np.pi/3)
+    R[idx] = I[idx] * (1 - S[idx])
+    G[idx] = I[idx] * (1 + S[idx] * np.cos(H[idx] - 2*np.pi/3) / np.cos(np.pi - H[idx]))
+    B[idx] = 3*I[idx] - (R[idx] + G[idx])
+
+    # BR sector.
+    idx = (4*np.pi/3 <= H) & (H < 2*np.pi)
+    G[idx] = I[idx] * (1 - S[idx])
+    B[idx] = I[idx] * (1 + S[idx] * np.cos(H[idx] - 4*np.pi/3) / np.cos(5*np.pi/3 - H[idx]))
+    R[idx] = 3*I[idx] - (G[idx] + B[idx])
+
+    return [R, G, B]
