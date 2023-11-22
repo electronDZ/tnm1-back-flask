@@ -27,7 +27,7 @@ def apply_papper_and_salt_noise(image, pepper_prob=0.2, salt_prob=0.2):
     return noisy.astype(np.uint8)
 
 
-def noise_function0(image, mean=0, sigma=50):
+def gaussian_noise(image, mean=0, sigma=50):
     """Load an image, display the original and noisy versions."""
     # Load an image
     image_data = image.read()
@@ -41,13 +41,13 @@ def noise_function0(image, mean=0, sigma=50):
 
     # Original Image
     plt.subplot(1, 2, 1)
-    plt.imshow(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), cmap="gray")
+    plt.imshow(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
     plt.title("Original Image")
 
     # Noisy Image
     plt.subplot(1, 2, 2)
-    plt.imshow(cv2.cvtColor(noisy_image, cv2.COLOR_BGR2RGB), cmap="gray")
-    plt.title("Noisy Image")
+    plt.imshow(cv2.cvtColor(noisy_image, cv2.COLOR_BGR2RGB))
+    plt.title("Noisy Image with gaussian noise")
 
     plt.show()
 
@@ -58,7 +58,7 @@ def noise_function0(image, mean=0, sigma=50):
 
 
 # papper and salt
-def noise_function1(image, pepper_prob=0.2, salt_prob=0.2):
+def pepper_salt_noise(image, pepper_prob=0.2, salt_prob=0.2):
     image_data = image.read()
     nparr = np.frombuffer(image_data, np.uint8)
     original_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -75,7 +75,7 @@ def noise_function1(image, pepper_prob=0.2, salt_prob=0.2):
     # # Noisy Grayscale Image with Salt-and-Pepper Noise
     plt.subplot(1, 2, 2)
     plt.imshow(noisy_image)
-    plt.title("Noisy Grayscale Image with Salt-and-Pepper Noise")
+    plt.title("Noisy Image with Salt-and-Pepper Noise")
 
     plt.show()
 
@@ -84,7 +84,7 @@ def noise_function1(image, pepper_prob=0.2, salt_prob=0.2):
 def apply_moyanneur_filter(image, kernel_size=3):
     img_cv2_rgb = image_to_rgb_convertor(image)
 
-    noisy = noise_function1(image, pepper_prob=0.2, salt_prob=0.2)
+    noisy = pepper_salt_noise(image, pepper_prob=0.2, salt_prob=0.2)
 
     kernel = np.ones((kernel_size, kernel_size), np.float32) / kernel_size * kernel_size
 
@@ -134,7 +134,6 @@ def apply_median_filter(image, kernel_size):
 
 
 def apply_min_max_filter(image, kernel_size):
-    
     image_data = image.read()
     nparr = np.frombuffer(image_data, np.uint8)
     noisy_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)

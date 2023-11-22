@@ -3,8 +3,8 @@
 from flask import Flask, request
 
 from utils.RGB_convertor import conidtional_converting
-#from filters.noise import noise_function
-from filters.noise import apply_gaussian_filter
+from filters.noise import gaussian_noise
+
 
 # Flask constructor takes the name of
 # current module (__name__) as argument.
@@ -25,7 +25,7 @@ def upload_image():
     if "image" in request.files:
         image_file = request.files["image"]
         conversion_mode = request.form["conversion_mode"]
-        apply_gaussian_filter(image_file)
+        gaussian_noise(image_file)
         # conidtional_converting(image_file,conversion_mode)
 
         return "Image received", 200
