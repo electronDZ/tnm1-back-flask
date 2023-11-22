@@ -58,34 +58,33 @@ def noise_function0(image, mean=0, sigma=50):
 
 
 # papper and salt
-def noise_function5(image, pepper_prob=0.2, salt_prob=0.2):
+def noise_function1(image, pepper_prob=0.2, salt_prob=0.2):
     image_data = image.read()
     nparr = np.frombuffer(image_data, np.uint8)
     original_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     noisy_image = apply_papper_and_salt_noise(original_image, pepper_prob, salt_prob)
-    return noisy_image
     # Display the original and noisy grayscale images side by side using matplotlib
-    # plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(10, 5))
 
     # Original Grayscale Image
-    # plt.subplot(1, 2, 1)
-    # plt.imshow(original_image)
-    # plt.title("Original Grayscale Image")
+    plt.subplot(1, 2, 1)
+    plt.imshow(original_image)
+    plt.title("Original Grayscale Image")
 
     # # Noisy Grayscale Image with Salt-and-Pepper Noise
-    # plt.subplot(1, 2, 2)
-    # plt.imshow(noisy_image)
-    # plt.title("Noisy Grayscale Image with Salt-and-Pepper Noise")
+    plt.subplot(1, 2, 2)
+    plt.imshow(noisy_image)
+    plt.title("Noisy Grayscale Image with Salt-and-Pepper Noise")
 
-    # plt.show()
+    plt.show()
 
 
 # filter with karnel *(moyanner filtering )
-def noise_function(image, kernel_size=3):
+def apply_moyanneur_filter(image, kernel_size=3):
     img_cv2_rgb = image_to_rgb_convertor(image)
 
-    noisy = noise_function5(image, pepper_prob=0.2, salt_prob=0.2)
+    noisy = noise_function1(image, pepper_prob=0.2, salt_prob=0.2)
 
     kernel = np.ones((kernel_size, kernel_size), np.float32) / kernel_size * kernel_size
 
@@ -101,3 +100,49 @@ def noise_function(image, kernel_size=3):
     plt.title("image after the filter")
 
     plt.show()
+
+
+def apply_gaussian_filter(image, kernel_size=5, sigma=0):
+    image_data = image.read()
+    nparr = np.frombuffer(image_data, np.uint8)
+    noisy_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+    filtered_image = cv2.GaussianBlur(noisy_image, kernel_size, sigma)
+    plt.subplot(1, 2, 1)
+    plt.imshow(noisy_image)
+    plt.title("noisy image")
+
+    plt.subplot(1, 2, 2)
+    plt.imshow("filtered image")
+    plt.show(filtered_image)
+
+
+def apply_median_filter(image, kernel_size):
+    image_data = image.read()
+    nparr = np.frombuffer(image_data, np.uint8)
+    noisy_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+    filtered_image = cv2.medianBlur(noisy_image, kernel_size)
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(noisy_image)
+    plt.title("noisy image")
+
+    plt.subplot(1, 2, 2)
+    plt.imshow("filtered image")
+    plt.show(filtered_image)
+
+
+def apply_min_max_filter(image, kernel_size):
+    image_data = image.read()
+    nparr = np.frombuffer(image_data, np.uint8)
+    noisy_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    # apply the minimum filter
+    min_filtered = cv2.erode(noisy_image, np.ones((kernel_size, kernel_size), np.uint8))
+
+    # Apply the maximum filter
+    max_filtered = cv2.dilate(
+        min_filtered, np.ones((kernel_size, kernel_size), np.uint8)
+    )
+
+    return max_filtered
