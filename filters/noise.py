@@ -134,6 +134,7 @@ def apply_median_filter(image, kernel_size):
 
 
 def apply_min_max_filter(image, kernel_size):
+    
     image_data = image.read()
     nparr = np.frombuffer(image_data, np.uint8)
     noisy_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
