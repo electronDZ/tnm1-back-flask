@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 from utils.image_to_rgb import image_to_rgb_convertor
 
 
-def apply_gaussian_noise(image, mean=7, sigma=50):
+def apply_gaussian_noise(image, sigma=50):
     """Apply Gaussian noise to an image."""
     row, col, ch = image.shape
-    gauss = np.random.normal(mean, sigma, (row, col, ch))
+    gauss = np.random.normal(0, sigma, (row, col, ch))
     noisy = np.clip(image + gauss, 0, 255)  # Clip values to the valid range [0, 255]
     return noisy.astype(np.uint8)
 
@@ -27,7 +27,7 @@ def apply_papper_and_salt_noise(image, pepper_prob=0.2, salt_prob=0.2):
     return noisy.astype(np.uint8)
 
 
-def gaussian_noise(image, mean=0, sigma=50):
+def gaussian_noise(image, sigma=25):
     """Load an image, display the original and noisy versions."""
     # Load an image
     image_data = image.read()
@@ -35,7 +35,7 @@ def gaussian_noise(image, mean=0, sigma=50):
     original_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
     # Apply Gaussian noise
-    noisy_image = apply_gaussian_noise(original_image, mean, sigma)
+    noisy_image = apply_gaussian_noise(original_image, sigma)
 
     plt.figure(figsize=(10, 5))
 
@@ -63,7 +63,7 @@ def pepper_salt_noise(image, pepper_prob=0.2, salt_prob=0.2):
     nparr = np.frombuffer(image_data, np.uint8)
     original_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    noisy_image = apply_papper_and_salt_noise(original_image, pepper_prob, salt_prob)
+    noisy_image = apply_papper_and_salt_noise(original_image, pepper_prob / 100, salt_prob / 100)
     # Display the original and noisy grayscale images side by side using matplotlib
     plt.figure(figsize=(10, 5))
 
