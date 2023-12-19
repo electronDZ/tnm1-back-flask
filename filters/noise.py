@@ -41,12 +41,12 @@ def gaussian_noise(image, sigma=25):
 
     # Original Image
     plt.subplot(1, 2, 1)
-    plt.imshow(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB))
+    plt.imshow(original_image)
     plt.title("Original Image")
 
     # Noisy Image
     plt.subplot(1, 2, 2)
-    plt.imshow(cv2.cvtColor(noisy_image, cv2.COLOR_BGR2RGB))
+    plt.imshow(noisy_image)
     plt.title("Noisy Image with gaussian noise")
 
     plt.show()
@@ -62,6 +62,8 @@ def pepper_salt_noise(image, pepper_prob=0.2, salt_prob=0.2):
     image_data = image.read()
     nparr = np.frombuffer(image_data, np.uint8)
     original_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+
 
     noisy_image = apply_papper_and_salt_noise(original_image, pepper_prob / 100, salt_prob / 100)
     # Display the original and noisy grayscale images side by side using matplotlib
